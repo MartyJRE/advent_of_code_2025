@@ -29,7 +29,7 @@ fn main() -> Result<()> {
     //region Part 1
     println!("=== Part 1 ===");
 
-    fn part1<R: BufRead>(reader: R) -> Result<usize> {
+    fn parts<R: BufRead>(reader: R, count_between: bool) -> Result<usize> {
         let mut zeros = 0;
         let mut start = 50;
         for line in reader.lines() {
@@ -61,8 +61,11 @@ fn main() -> Result<()> {
                 } else if start < 0 {
                     start = 99;
                 }
+                if count_between && start == 0 {
+                    zeros += 1;
+                }
             }
-            if start == 0 {
+            if !count_between && start == 0 {
                 zeros += 1;
             }
         }
@@ -70,61 +73,20 @@ fn main() -> Result<()> {
     }
 
     // TODO: Set the expected answer for the test input
-    assert_eq!(3, part1(BufReader::new(TEST.as_bytes()))?);
+    assert_eq!(3, parts(BufReader::new(TEST.as_bytes()),false)?);
 
     let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    let result = time_snippet!(part1(input_file)?);
+    let result = time_snippet!(parts(input_file, false)?);
     println!("Result = {}", result);
     //endregion
 
     //region Part 2
     println!("\n=== Part 2 ===");
 
-    fn part2<R: BufRead>(reader: R) -> Result<usize> {
-
-        let mut zeros = 0;
-        let mut start = 50;
-        for line in reader.lines() {
-            let line = line?;
-            let first = line.chars().next();
-            let direction = match first {
-                Some(c) => {
-                    if c == 'R' {
-                        1
-                    } else if c == 'L' {
-                        -1
-                    } else {
-                        0
-                    }
-                }
-                None => 0,
-            };
-            let mut count = i32::from_str(&line[1..])?;
-            while count != 0 {
-                if direction == 1 {
-                    start += 1;
-                    count -= 1;
-                } else if direction == -1 {
-                    start -= 1;
-                    count -= 1;
-                }
-                if start > 99 {
-                    start = 0;
-                } else if start < 0 {
-                    start = 99;
-                }
-                if start == 0 {
-                    zeros += 1;
-                }
-            }
-        }
-        Ok(zeros)
-    }
-
-    assert_eq!(6, part2(BufReader::new(TEST.as_bytes()))?);
+    assert_eq!(6, parts(BufReader::new(TEST.as_bytes()), true)?);
 
     let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    let result = time_snippet!(part2(input_file)?);
+    let result = time_snippet!(parts(input_file, true)?);
     println!("Result = {}", result);
     //endregion
 
