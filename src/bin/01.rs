@@ -47,7 +47,7 @@ fn main() -> Result<()> {
                 }
                 None => 0,
             };
-            let mut count = i32::from_str(&line[1..])?;
+            let mut count = u16::from_str(&line[1..])?;
             while count != 0 {
                 if direction == 1 {
                     start += 1;
