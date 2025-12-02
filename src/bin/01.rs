@@ -73,7 +73,7 @@ fn main() -> Result<()> {
     }
 
     // TODO: Set the expected answer for the test input
-    assert_eq!(3, parts(BufReader::new(TEST.as_bytes()),false)?);
+    assert_eq!(3, parts(BufReader::new(TEST.as_bytes()), false)?);
 
     let input_file = BufReader::new(File::open(INPUT_FILE)?);
     let result = time_snippet!(parts(input_file, false)?);
