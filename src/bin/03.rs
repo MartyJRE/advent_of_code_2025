@@ -2,7 +2,8 @@ use adv_code_2025::*;
 use anyhow::*;
 use code_timing_macros::time_snippet;
 use const_format::concatcp;
-use itertools::Itertools;
+use num_traits::{AsPrimitive, CheckedAdd, CheckedMul, FromPrimitive, Pow, Zero};
+use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -22,51 +23,28 @@ fn main() -> Result<()> {
     //region Part 1
     println!("=== Part 1 ===");
 
-    fn part1<R: BufRead>(reader: R) -> Result<i32> {
-        let mut res = 0;
+    fn parts<R: BufRead, N>(reader: R, len: usize) -> Result<N>
+    where
+        N: FromPrimitive
+            + Zero
+            + Ord
+            + Copy
+            + Display
+            + CheckedMul
+            + CheckedAdd
+            + Pow<usize, Output = N>,
+    {
+        let mut res = N::zero();
         let banks = reader.lines().flatten().collect::<Vec<_>>();
         for bank in &banks {
+            let mut possible_positions = bank.len() - len;
             let actual_bank = bank
                 .chars()
-                .map(|c| c.to_digit(10).expect("only digits allowed") as i32)
+                .map(|c| {
+                    N::from_u32(c.to_digit(10).expect("only digits allowed")).expect("must convert")
+                })
                 .collect::<Vec<_>>();
-            let last_possible = bank.len() - 2;
-            let mut max = i32::MIN;
-            for i in 0..=last_possible {
-                for j in i + 1..=last_possible + 1 {
-                    let tens = *actual_bank.get(i).expect("must be within bounds");
-                    let ones = *actual_bank.get(j).expect("must be within bounds");
-                    let answer = tens * 10 + ones;
-                    if answer > max {
-                        max = answer;
-                    }
-                }
-            }
-            res += max;
-        }
-        Ok(res)
-    }
-
-    assert_eq!(357, part1(BufReader::new(TEST.as_bytes()))?);
-
-    let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    let result = time_snippet!(part1(input_file)?);
-    println!("Result = {}", result);
-    //endregion
-
-    //region Part 2
-    println!("\n=== Part 2 ===");
-
-    fn part2<R: BufRead>(reader: R) -> Result<i64> {
-        let mut res = 0;
-        let banks = reader.lines().flatten().collect::<Vec<_>>();
-        for bank in &banks {
-            let mut possible_positions = bank.len() - 12;
-            let actual_bank = bank
-                .chars()
-                .map(|c| c.to_digit(10).expect("only digits allowed") as i64)
-                .collect::<Vec<_>>();
-            let mut stack = Vec::<i64>::with_capacity(bank.len());
+            let mut stack = Vec::with_capacity(bank.len());
             for digit in &actual_bank {
                 while !stack.is_empty()
                     && stack.last().expect("stack is not empty") < digit
@@ -77,22 +55,35 @@ fn main() -> Result<()> {
                 }
                 stack.push(*digit);
             }
-            let digits_of_stack = stack.iter().take(12).collect::<Vec<_>>();
-            let mut answer = 0;
+            let digits_of_stack = stack.iter().take(len).collect::<Vec<_>>();
+            let mut answer = N::zero();
             for idx in 0..digits_of_stack.len() {
                 let digit = *digits_of_stack.get(idx).expect("must be within bounds");
-                let inverse = (digits_of_stack.len() - idx - 1) as u32;
-                answer += digit * 10i64.pow(inverse);
+                let inverse = (digits_of_stack.len() - idx - 1);
+                answer = answer.add(*digit * N::from_i32(10).unwrap().pow(inverse));
             }
-            res += answer;
+            res = res.add(answer);
         }
         Ok(res)
     }
 
-    assert_eq!(3121910778619, part2(BufReader::new(TEST.as_bytes()))?);
+    assert_eq!(357, parts::<_, u16>(BufReader::new(TEST.as_bytes()), 2)?);
 
     let input_file = BufReader::new(File::open(INPUT_FILE)?);
-    let result = time_snippet!(part2(input_file)?);
+    let result = time_snippet!(parts::<_, u16>(input_file, 2)?);
+    println!("Result = {}", result);
+    //endregion
+
+    //region Part 2
+    println!("\n=== Part 2 ===");
+
+    assert_eq!(
+        3121910778619,
+        parts::<_, u64>(BufReader::new(TEST.as_bytes()), 12)?
+    );
+
+    let input_file = BufReader::new(File::open(INPUT_FILE)?);
+    let result = time_snippet!(parts::<_, u64>(input_file, 12)?);
     println!("Result = {}", result);
     //endregion
 
