@@ -1,0 +1,46 @@
+name: Advent of Code 2025
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  discover:
+    name: Discover days
+    runs-on: ubuntu-latest
+    outputs:
+      days: ${{ steps.find-days.outputs.days }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find day binaries
+        id: find-days
+        run: |
+          days=$(ls src/bin/*.rs | grep -oP '\d{2}(?=\.rs)' | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "days=$days" >> $GITHUB_OUTPUT
+
+  solve:
+    name: Day ${{ matrix.day }}
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        day: ${{ fromJson(needs.discover.outputs.days) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install hyperfine
+        run: sudo apt-get install -y hyperfine
+      - name: Build
+        run: cargo build --release --bin ${{ matrix.day }}
+      - name: Run
+        run: cargo run --release --bin ${{ matrix.day }}
+      - name: Benchmark
+        run: hyperfine --warmup 3 --runs 10 './target/release/${{ matrix.day }}'
