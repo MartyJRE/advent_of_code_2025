@@ -2,7 +2,7 @@ use adv_code_2025::*;
 use anyhow::*;
 use code_timing_macros::time_snippet;
 use const_format::concatcp;
-use num_traits::{AsPrimitive, CheckedAdd, CheckedMul, FromPrimitive, Pow, Zero};
+use num_traits::{CheckedAdd, CheckedMul, FromPrimitive, Pow, Zero};
 use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -59,7 +59,7 @@ fn main() -> Result<()> {
             let mut answer = N::zero();
             for idx in 0..digits_of_stack.len() {
                 let digit = *digits_of_stack.get(idx).expect("must be within bounds");
-                let inverse = (digits_of_stack.len() - idx - 1);
+                let inverse = digits_of_stack.len() - idx - 1;
                 answer = answer.add(*digit * N::from_i32(10).unwrap().pow(inverse));
             }
             res = res.add(answer);
