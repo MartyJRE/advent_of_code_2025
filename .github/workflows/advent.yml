@@ -43,4 +43,4 @@ jobs:
       - name: Run
         run: cargo run --release --bin ${{ matrix.day }}
       - name: Benchmark
-        run: hyperfine --warmup 3 --runs 10 './target/release/${{ matrix.day }}'
+        run: hyperfine -N --warmup 10 --runs 100 './target/release/${{ matrix.day }}'
