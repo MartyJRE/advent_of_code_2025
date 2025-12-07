@@ -12,8 +12,11 @@ Saving Christmas one puzzle at a time. Written in Rust because I hate myself (af
 | [02](src/bin/02.rs) | :star::star: | Pattern-ception |
 | [03](src/bin/03.rs) | :star::star: | Generics overkill |
 | [04](src/bin/04.rs) | :star::star: | Grid erosion simulator |
+| [05](src/bin/05.rs) | :star::star: | Range anxiety |
+| [06](src/bin/06.rs) | :star::star: | Column-wise chaos |
+| [07](src/bin/07.rs) | :star::star: | Quantum timeline DP |
 
-**Total: 8/24 stars**
+**Total: 14/24 stars**
 
 ## Running
 
