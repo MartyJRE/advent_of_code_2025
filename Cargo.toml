@@ -11,3 +11,4 @@ anyhow = "1.0.100"
 code-timing-macros = { version = "0.0.6", features = ["release", "default", "tracing", "testing"] }
 const_format = "0.2.35"
 num-traits = "0.2.19"
+rayon = "1.10"
