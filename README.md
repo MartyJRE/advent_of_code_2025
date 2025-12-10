@@ -16,8 +16,9 @@ Saving Christmas one puzzle at a time. Written in Rust because I hate myself (af
 | [06](src/bin/06.rs) | :star::star: | Column-wise chaos |
 | [07](src/bin/07.rs) | :star::star: | Quantum timeline DP |
 | [08](src/bin/08.rs) | :star::star: | Union-Find from hell |
+| [09](src/bin/09.rs) | :star::star: | Point-in-polygon therapy session |
 
-**Total: 16/24 stars**
+**Total: 18/24 stars**
 
 ## Running
 
