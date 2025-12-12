@@ -19,8 +19,9 @@ Saving Christmas one puzzle at a time. Written in Rust because I hate myself (af
 | [09](src/bin/09.rs) | :star::star: | Point-in-polygon therapy session |
 | [10](src/bin/10.rs) | :star::star: | Linear algebra trauma            |
 | [11](src/bin/11.rs) | :star::star: | Easy tree traversal              |
+| [12](src/bin/12.rs) | :star:       | Shape tetris backtracking        |
 
-**Total: 20/24 stars**
+**Total: 23/23 stars**
 
 ## Running
 
